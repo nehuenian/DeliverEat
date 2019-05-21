@@ -1,0 +1,67 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.isw.delivereat"
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+androidExtensions {
+    experimental = true
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //region AndroidX
+    implementation androidX.legacy_support
+    implementation androidX.appcompat
+    implementation androidX.core_ktx
+    implementation androidX.cardView
+    implementation androidX.recyclerView
+    implementation androidX.legacySupport
+    implementation androidX.constraintLayout
+    //endregion
+    //region Architecture Components
+    kapt androidX.room_compiler
+    implementation androidX.room_runtime
+    implementation androidX.room_ktx
+    implementation androidX.lifecycle_extensions
+    kapt androidX.lifecycle_compiler
+    //endregion
+    //region Android and Commons
+    implementation commons.material
+    implementation commons.kotlin
+    implementation commons.gson
+    implementation commons.retrofit
+    implementation commons.retrofitConverter
+    implementation commons.glide
+    kapt commons.glideCompiler
+    //endregion
+    // region Local unit tests
+    testImplementation testing.junit
+    testImplementation testing.mockito
+    testImplementation testing.hamcrest
+    testImplementation testing.arch_core_testing
+    testImplementation testing.test_core
+    //endregion
+}

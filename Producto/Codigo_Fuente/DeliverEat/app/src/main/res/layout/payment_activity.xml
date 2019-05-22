@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="producto"
+            type="com.isw.delivereat.dto.Producto"/>
+
+        <variable
+            name="formaPago"
+            type="com.isw.delivereat.dto.FormaPago"/>
+
+        <variable
+            name="formaEnvio"
+            type="com.isw.delivereat.dto.FormaEnvio"/>
+
+        <variable
+            name="direccion"
+            type="com.isw.delivereat.dto.Direccion"/>
+
+        <variable
+            name="viewModel"
+            type="com.isw.delivereat.ui.payment.PaymentViewModel" />
+
+        <variable
+            name="subtotal"
+            type="Float" />
+
+        <variable
+            name="costoEnvio"
+            type="Float" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.payment.PaymentActivity">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="58dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:layout_margin="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:textSize="19sp"
+                            android:maxLines="2"
+                            android:text="@{producto.nombre}"
+                            tools:text="Hamburguesa\n Riquisima" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            android:textAlignment="center"
+                            android:textFontWeight="bold"
+                            android:text="@{String.format(@string/x_cantidad, producto.cantidad)}" />
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@color/color_divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textAlignment="viewStart"
+                                android:text="Subtotal"
+                                android:gravity="start" />
+
+                            <TextView
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textAlignment="viewEnd"
+                                android:gravity="end"
+                                app:precio="@{subtotal}" />
+
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@color/color_divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="12sp"
+                                android:layout_gravity="start"
+                                android:text="Envío" />
+
+                            <TextView
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="12sp"
+                                android:textAlignment="viewEnd"
+                                android:gravity="end"
+                                app:precio="@{costoEnvio}" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@color/color_divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:layout_gravity="start"
+                                android:text="Total" />
+
+                            <TextView
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:textAlignment="viewEnd"
+                                android:gravity="end"
+                                app:precio="@{costoEnvio + subtotal}" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="24dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/detalles_de_entrega"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:background="@color/color_divider" />
+
+                    <LinearLayout
+                        android:id="@+id/direccionContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingBottom="@dimen/payment_activity_item_padding_vertical"
+                        android:paddingTop="@dimen/payment_activity_item_padding_vertical"
+                        android:paddingStart="@dimen/payment_activity_item_padding_horizontal"
+                        android:paddingEnd="@dimen/payment_activity_item_padding_horizontal"
+                        android:background="?attr/selectableItemBackground"
+                        android:onClick="@{(view) -> viewModel.directionClick(view)}"
+                        android:baselineAligned="false">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:orientation="vertical"
+                            android:layout_weight="3">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/direccion"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{direccion != null ? direccion.toString() : @string/direccion}"
+                                android:visibility="@{direccion == null ? View.GONE : View.VISIBLE}"
+                                android:textSize="14sp"
+                                android:layout_marginTop="@dimen/payment_activity_item_subtext_margin_top"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical|end"
+                                android:text="@string/editar"
+                                android:textSize="12sp"
+                                android:textColor="@color/color_primary"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+                        </FrameLayout>
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:background="@color/color_divider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingBottom="@dimen/payment_activity_item_padding_vertical"
+                        android:paddingTop="@dimen/payment_activity_item_padding_vertical"
+                        android:paddingStart="@dimen/payment_activity_item_padding_horizontal"
+                        android:paddingEnd="@dimen/payment_activity_item_padding_horizontal"
+                        android:background="?attr/selectableItemBackground"
+                        android:onClick="@{(view) -> viewModel.formaPagoClick(view)}"
+                        android:baselineAligned="false">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:orientation="vertical"
+                            android:layout_weight="3">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/forma_de_pago"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{formaPago != null ? formaPago.toString() : @string/forma_de_pago}"
+                                android:visibility="@{formaPago == null ? View.GONE : View.VISIBLE}"
+                                android:textSize="14sp"
+                                android:layout_marginTop="@dimen/payment_activity_item_subtext_margin_top"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical|end"
+                                android:text="@string/editar"
+                                android:textSize="12sp"
+                                android:textColor="@color/color_primary"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+                        </FrameLayout>
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:background="@color/color_divider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingBottom="@dimen/payment_activity_item_padding_vertical"
+                        android:paddingTop="@dimen/payment_activity_item_padding_vertical"
+                        android:paddingStart="@dimen/payment_activity_item_padding_horizontal"
+                        android:paddingEnd="@dimen/payment_activity_item_padding_horizontal"
+                        android:onClick="@{(view) -> viewModel.formaEnvioClick(view)}"
+                        android:background="?attr/selectableItemBackground"
+                        android:baselineAligned="false">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:orientation="vertical"
+                            android:layout_weight="3">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/horario_de_entrega"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{formaEnvio != null ? formaEnvio.toString() : @string/horario_de_entrega}"
+                                android:visibility="@{formaEnvio == null ? View.GONE : View.VISIBLE}"
+                                android:textSize="14sp"
+                                android:layout_marginTop="@dimen/payment_activity_item_subtext_margin_top"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical|end"
+                                android:text="@string/editar"
+                                android:textSize="12sp"
+                                android:textColor="@color/color_primary"
+                                android:layout_marginLeft="@dimen/payment_activity_text_magin_horizontal"
+                                android:layout_marginStart="@dimen/payment_activity_text_magin_horizontal" />
+                        </FrameLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/continue_buying_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:text="@string/confirm_buy"
+            android:layout_margin="@dimen/default_fab_margin"
+            app:backgroundTint="@color/color_secondary"
+            android:textColor="@color/color_on_secondary"
+            app:rippleColor="@color/color_secondary_variant"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

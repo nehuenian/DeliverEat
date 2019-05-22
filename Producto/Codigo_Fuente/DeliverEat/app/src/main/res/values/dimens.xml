@@ -16,4 +16,8 @@
     <dimen name="alpha_emphasis_medium">@dimen/mtrl_emphasis_medium</dimen>
     <dimen name="alpha_emphasis_disabled">@dimen/mtrl_emphasis_disabled</dimen>
     <dimen name="default_fab_margin">16dp</dimen>
+    <dimen name="payment_activity_item_padding_horizontal">8dp</dimen>
+    <dimen name="payment_activity_item_padding_vertical">16dp</dimen>
+    <dimen name="payment_activity_item_subtext_margin_top">4dp</dimen>
+    <dimen name="payment_activity_text_magin_horizontal">2dp</dimen>
 </resources>

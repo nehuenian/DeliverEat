@@ -1,14 +1,16 @@
 package com.isw.delivereat.ui.cart
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.snackbar.Snackbar
 import com.isw.delivereat.R
 import com.isw.delivereat.databinding.CartActivityBinding
 import com.isw.delivereat.dto.Producto
+import com.isw.delivereat.ui.payment.DireccionActivity
+import com.isw.delivereat.ui.payment.PaymentActivity
 import com.isw.delivereat.util.EventObserver
 import kotlinx.android.synthetic.main.cart_activity.*
 
@@ -31,7 +33,9 @@ class CartActivity : AppCompatActivity() {
             cartActivityBinding.producto = it
         })
         viewModel.onContinueBuying.observe(this, EventObserver {
-            Snackbar.make(it, "Prueba", Snackbar.LENGTH_SHORT).show()
+            val intent = Intent(this, PaymentActivity::class.java)
+            intent.putExtra("producto", viewModel.producto.value)
+            startActivity(intent)
         })
 
         cartActivityBinding.cartViewModel = viewModel

@@ -1,7 +1,5 @@
 package com.isw.delivereat.api
 
-import androidx.lifecycle.LiveData
-import com.android.example.github.util.LiveDataCallAdapterFactory
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.isw.delivereat.dto.MunicipioSearchResponse
@@ -20,16 +18,8 @@ interface DatosGeofraficosApi {
      * @param nombre complete or part of the name of the Municipio to search
      * @param inicio delta used for paging
      */
-    @GET("municipios?formato=json&aplanar&max=20&inicio={inicio}&campos=nombre&nombre={nombre}&provincia=córdoba")
-    fun getMunicipios(@Path("nombre") nombre: String, @Path("inicio") inicio: Int): LiveData<ApiResponse<MunicipioSearchResponse>>
-
-    /**
-     * Used for fetching Municipios when more are needed
-     * @param nombre complete or part of the name of the Municipio to search
-     * @param inicio delta used for paging
-     */
-    @GET("municipios?formato=json&aplanar&max=20&inicio={inicio}&campos=nombre&nombre={nombre}&provincia=córdoba")
-    fun getMoreMunicipios(@Path("nombre") nombre: String, @Path("inicio") inicio: Int): Call<MunicipioSearchResponse>
+    @GET("municipios?formato=json&aplanar&max=1000&inicio={inicio}&campos=nombre&nombre={nombre}&provincia=córdoba")
+    fun getMunicipios(@Path("nombre") nombre: String, @Path("inicio") inicio: Int): Call<MunicipioSearchResponse>
 
     companion object {
 
@@ -55,7 +45,6 @@ interface DatosGeofraficosApi {
             return Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .baseUrl("https://apis.datos.gob.ar/georef/api/")
-                .addCallAdapterFactory(LiveDataCallAdapterFactory())
                 .build()
                 .create(DatosGeofraficosApi::class.java)
         }

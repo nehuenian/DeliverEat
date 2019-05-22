@@ -1,56 +1,30 @@
 package com.isw.delivereat.api
 
-import retrofit2.Response
-
-/**
- * Common class used by API responses.
- *
- * @param <T> the type of the response object
- */
-@Suppress("unused")
-sealed class ApiResponse<T> {
+class ApiResponse<T>(
     @Suppress("KDocMissingDocumentation")
+    val data: T? = null,
+    error: Throwable?,
+    status: Status?
+) {
     companion object {
-        fun <T> create(error: Throwable): ApiErrorResponse<T> {
-            return ApiErrorResponse(error.message ?: "unknown error")
-        }
+        /**
+         * Creates a [FormApiResponse] with [Status.SUCCESS] and data value from parameter
+         *
+         * @param form data fetched
+         */
+        fun <T> success(data: T): ApiResponse<T> = ApiResponse(data, null, Status.SUCCESS)
 
-        fun <T> create(response: Response<T>): ApiResponse<T> {
-            return if (response.isSuccessful) {
-                val body = response.body()
-                if (body == null || response.code() == 204) {
-                    ApiEmptyResponse()
-                } else {
-                    ApiSuccessResponse(body = body)
-                }
-            } else {
-                val msg = response.errorBody()?.string()
-                val errorMsg = if (msg.isNullOrEmpty()) {
-                    response.message()
-                } else {
-                    msg
-                }
-                ApiErrorResponse(errorMsg ?: "unknown error")
-            }
-        }
+        /**
+         * Creates a [FormApiResponse] with [Status.ERROR], null data and the [Throwable] error.
+         *
+         * @param error value
+         */
+        fun <T> error(throwable: Throwable): ApiResponse<T> =
+            ApiResponse(null, throwable, Status.ERROR)
+
+        /**
+         * Creates a [FormApiResponse] with [Status.LOADING]. [form] and [error] null
+         */
+        fun <T> loading(): ApiResponse<T> = ApiResponse(null, null, Status.LOADING)
     }
 }
-
-/**
- * separate class for HTTP 204 responses so that we can make ApiSuccessResponse's body non-null.
- */
-class ApiEmptyResponse<T> : ApiResponse<T>()
-
-/**
- * Creates an ApiSuccessResponse
- * @param body data to populate de response
- * @param T type of the response
- */
-data class ApiSuccessResponse<T>(val body: T) : ApiResponse<T>()
-
-
-/**
- * Creates an ApiErrorResponse
- * @param errorMessage message of the error
- */
-data class ApiErrorResponse<T>(val errorMessage: String) : ApiResponse<T>()

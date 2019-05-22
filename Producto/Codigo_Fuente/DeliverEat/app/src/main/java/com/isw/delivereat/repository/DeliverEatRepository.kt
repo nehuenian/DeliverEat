@@ -2,16 +2,13 @@ package com.isw.delivereat.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
-import com.isw.delivereat.api.ApiSuccessResponse
+import androidx.lifecycle.MutableLiveData
+import com.isw.delivereat.api.ApiResponse
 import com.isw.delivereat.api.DatosGeofraficosApi
-import com.isw.delivereat.db.DeliverEatDatabase
-import com.isw.delivereat.db.dao.MunicipioDao
-import com.isw.delivereat.dto.Municipio
 import com.isw.delivereat.dto.MunicipioSearchResponse
-import com.isw.delivereat.dto.MunicipioSearchResult
-import com.isw.delivereat.dto.Resource
-import com.isw.delivereat.util.AppExecutors
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * Repository class based on Android Architecture Components. Since not many data will be used,
@@ -22,63 +19,38 @@ import com.isw.delivereat.util.AppExecutors
  * Created by Jeremias Gersicich on 2019-05-20
  */
 class DeliverEatRepository private constructor(
-    private val datosGeoApi: DatosGeofraficosApi,
-    private val database: DeliverEatDatabase
+    private val datosGeoApi: DatosGeofraficosApi
 ) {
 
-    private val municipioDao: MunicipioDao by lazy {
-        database.municipioDao()
-    }
+    fun searchMunicipio(nombre: String): LiveData<ApiResponse<MunicipioSearchResponse>> {
+        val livedata = MutableLiveData<ApiResponse<MunicipioSearchResponse>>()
 
-    fun searchMoreMunicipios(query: String): LiveData<Resource<Boolean>> {
-        val searchMoreMunicipiosTask = SearchMoreMunicipiosTask(
-            query = query,
-            datosGeofraficosApi = datosGeoApi,
-            db = database
-        )
-        AppExecutors.networkIO().execute(searchMoreMunicipiosTask)
-        return searchMoreMunicipiosTask.liveData
-    }
-
-    fun searchMunicipio(nombre: String): LiveData<Resource<List<Municipio>>> {
-        return object : NetworkResource<List<Municipio>, MunicipioSearchResponse>() {
-
-            override fun saveCallResult(item: MunicipioSearchResponse) {
-                val municipiosIds = item.municipios.map { it.id }
-                val municipioSearchResponse =
-                    MunicipioSearchResult(
-                        nombre = nombre,
-                        municipiosIds = municipiosIds,
-                        total = item.total,
-                        nextInicio = item.inicio + item.max
-                    )
-                database.runInTransaction {
-                    municipioDao.insertAll(item.municipios)
-                    municipioDao.insert(municipioSearchResponse)
-                }
-            }
-
-            override fun shouldFetch(data: List<Municipio>?): Boolean {
-                return data == null || data.isEmpty()
-            }
-
-            override fun loadFromDb(): LiveData<List<Municipio>> {
-                return Transformations.switchMap(municipioDao.search(nombre)) { searchData ->
-                    if (searchData == null) {
-                        AbsentLiveData.create()
+        livedata.postValue(ApiResponse.loading())
+        datosGeoApi.getMunicipios(nombre, 0).enqueue(object : Callback<MunicipioSearchResponse> {
+            override fun onResponse(
+                call: Call<MunicipioSearchResponse>,
+                response: Response<MunicipioSearchResponse>
+            ) {
+                if (response.isSuccessful) {
+                    if (response.body() == null) {
+                        val exc = Throwable("Response body is empty")
+                        livedata.postValue(ApiResponse.error(exc))
                     } else {
-                        municipioDao.loadOrdered(searchData.municipiosIds)
+                        livedata.postValue(ApiResponse.success(response.body()!!))
+
                     }
+                } else {
+                    val exc = Throwable(response.errorBody()?.string()!!)
+                    livedata.postValue(ApiResponse.error(exc))
                 }
             }
 
-            override fun createCall() = datosGeoApi.getMunicipios(nombre, 0)
-
-            override fun processResponse(response: ApiSuccessResponse<MunicipioSearchResponse>)
-                    : MunicipioSearchResponse {
-                return response.body
+            override fun onFailure(call: Call<MunicipioSearchResponse>, t: Throwable) {
+                livedata.postValue(ApiResponse.error(t))
             }
-        }.asLiveData()
+        })
+
+        return livedata
     }
 
     companion object {
@@ -89,8 +61,7 @@ class DeliverEatRepository private constructor(
                 synchronized(DeliverEatRepository::class) {
                     INSTANCE =
                         DeliverEatRepository(
-                            DatosGeofraficosApi.getInstance()!!,
-                            DeliverEatDatabase.getInstance(context)!!
+                            DatosGeofraficosApi.getInstance()!!
                         )
                 }
             }
@@ -99,19 +70,6 @@ class DeliverEatRepository private constructor(
 
         fun destroyInstance() {
             INSTANCE = null
-        }
-    }
-
-    class AbsentLiveData<T : Any?> private constructor() : LiveData<T>() {
-        init {
-            // use post instead of set since this can be created on any thread
-            postValue(null)
-        }
-
-        companion object {
-            fun <T> create(): LiveData<T> {
-                return AbsentLiveData()
-            }
         }
     }
 }

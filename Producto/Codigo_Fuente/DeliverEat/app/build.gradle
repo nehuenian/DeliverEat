@@ -42,6 +42,7 @@ dependencies {
     implementation androidX.constraintLayout
     //endregion
     //region Architecture Components
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt androidX.room_compiler
     implementation androidX.room_runtime
     implementation androidX.room_ktx
